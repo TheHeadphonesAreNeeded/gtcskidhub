@@ -1,0 +1,44 @@
+# ============================================================
+# SkidHub — Netlify build & deploy configuration
+# ============================================================
+# Every push to `main` triggers an automatic deploy on Netlify
+# using the settings below. Secrets are supplied via the Netlify
+# dashboard (Site settings > Environment variables), never here.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  # Keep the Node runtime consistent between local and CI.
+  NODE_VERSION = "20"
+  # Do not fail the build on secret-scanning false positives from
+  # the .env.example template (it only contains placeholders).
+  SECRETS_SCAN_OMIT_PATHS = ".env.example,README.md,docs/**"
+
+# The official Next.js runtime wires the App Router, image
+# optimization, and server components into Netlify automatically.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Backend API routes are implemented as standalone Netlify Functions.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Convenience alias so the frontend can call `/api/*` instead of the
+# longer `/.netlify/functions/*` path.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
+
+# Security headers applied to every response.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
