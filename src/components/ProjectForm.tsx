@@ -47,7 +47,7 @@ export default function ProjectForm({
     thumbnail: initial?.thumbnail ?? "",
     google_drive_url: initial?.google_drive_url ?? "",
     file_size: initial?.file_size ?? "",
-    category: initial?.category ?? "Scripts",
+    category: initial?.category ?? "Projects",
     tags: (initial?.tags ?? []).join(", "),
     download_role: (initial?.download_role ?? "user") as Role,
   });

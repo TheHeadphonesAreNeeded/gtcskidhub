@@ -63,17 +63,29 @@ export interface AdminStats {
 }
 
 export const CATEGORIES = [
+  "Projects",
   "Mod Menus",
-  "Cosmetics",
-  "Recolors",
-  "Maps",
-  "Platformer",
-  "Plugins",
-  "Utilities",
+  "Scripts/mods",
   "Other",
 ] as const;
 
 export type Category = (typeof CATEGORIES)[number];
+
+// Community submissions — copies people post themselves, linked on an
+// external store (Meta / Horizon or itch.io) rather than a Drive file.
+export type StoreType = "meta" | "itch";
+
+export interface Submission {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string | null;
+  store_url: string;
+  store_type: StoreType;
+  author: string;
+  author_id: string | null;
+  created_at: string;
+}
 
 export function roleAllows(userRole: Role, requiredRole: Role): boolean {
   return ROLE_RANK[userRole] >= ROLE_RANK[requiredRole];
