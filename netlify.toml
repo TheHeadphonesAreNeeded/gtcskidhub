@@ -10,8 +10,11 @@
   publish = ".next"
 
 [build.environment]
-  # Keep the Node runtime consistent between local and CI.
-  NODE_VERSION = "20"
+  # Node 22 ships a native global WebSocket, which the Supabase client's
+  # realtime module requires at startup. (Also set AWS_LAMBDA_JS_RUNTIME so
+  # the deployed Functions run on the same version, not just the build.)
+  NODE_VERSION = "22"
+  AWS_LAMBDA_JS_RUNTIME = "nodejs22.x"
   # Do not fail the build on secret-scanning false positives from
   # the .env.example template (it only contains placeholders).
   SECRETS_SCAN_OMIT_PATHS = ".env.example,README.md,docs/**"
