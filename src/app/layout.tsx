@@ -5,6 +5,7 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 import { SettingsProvider } from "@/components/providers/SettingsProvider";
 import { ToastProvider } from "@/components/providers/ToastProvider";
 import { AdSenseScript } from "@/components/AdSense";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`dark ${inter.variable} ${mono.variable}`}>
       <body className="font-sans">
+        <GoogleAnalytics />
         <AdSenseScript />
         <SettingsProvider>
           <ToastProvider>
