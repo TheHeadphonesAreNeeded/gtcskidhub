@@ -1,0 +1,5 @@
+# Google AdSense authorized sellers file.
+# Replace pub-0000000000000000 with your own AdSense publisher ID
+# (the digits from NEXT_PUBLIC_ADSENSE_CLIENT, e.g. ca-pub-1234 -> pub-1234).
+# AdSense will not serve ads until this line matches your account.
+google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
