@@ -121,7 +121,10 @@ export const handler: Handler = safe(async (event: HandlerEvent) => {
 
   if (error || !upserted) {
     console.error("[skidhub] user upsert failed", error);
-    return redirect(`${siteUrl()}/?auth=db_error`);
+    const detail = error?.message
+      ? `&detail=${encodeURIComponent(error.message)}`
+      : "";
+    return redirect(`${siteUrl()}/?auth=db_error${detail}`);
   }
 
   const jwtToken = signSession(upserted.id, upserted.discord_id);
