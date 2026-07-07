@@ -85,6 +85,24 @@ create table if not exists download_logs (
 create index if not exists download_logs_created_idx on download_logs(created_at desc);
 create index if not exists download_logs_project_idx  on download_logs(project_id);
 
+-- ---- Community submissions ----------------------------------
+-- Copies people post themselves, linked on an external store (Meta /
+-- Horizon Worlds or itch.io) instead of a Google Drive file.
+create table if not exists submissions (
+  id          uuid primary key default gen_random_uuid(),
+  title       text not null,
+  description text not null,
+  thumbnail   text,
+  store_url   text not null,
+  store_type  text not null default 'itch' check (store_type in ('meta','itch')),
+  author      text not null,
+  author_id   uuid references users(id) on delete set null,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists submissions_created_idx on submissions(created_at desc);
+create index if not exists submissions_author_idx  on submissions(author_id);
+
 -- ---- Row Level Security -------------------------------------
 -- Service-role (used by the Netlify Functions) always bypasses RLS.
 -- Enabling it here blocks anonymous/public clients from reading or writing
@@ -93,6 +111,7 @@ alter table users         enable row level security;
 alter table projects      enable row level security;
 alter table favorites     enable row level security;
 alter table download_logs enable row level security;
+alter table submissions   enable row level security;
 
 -- Optional: allow the public anon key to read the catalogue directly.
 -- Uncomment if you want client-side reads without going through a function.

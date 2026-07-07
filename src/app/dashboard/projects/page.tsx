@@ -83,9 +83,9 @@ export default function ProjectsPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Copies</h1>
+          <h1 className="text-2xl font-bold">Assets</h1>
           <p className="text-sm text-slate-400">
-            Browse the full catalogue of exclusive Gorilla Tag copies.
+            Browse the full catalogue of exclusive Gorilla Tag assets.
           </p>
         </div>
         {user && roleAllows(user.role, "moderator") && (
@@ -100,7 +100,7 @@ export default function ProjectsPage() {
         <div className="flex flex-col gap-3 sm:flex-row">
           <input
             className="input flex-1"
-            placeholder="Search copies…"
+            placeholder="Search assets…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
