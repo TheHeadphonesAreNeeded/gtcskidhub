@@ -11,7 +11,7 @@ import { roleAllows } from "@/lib/types";
 
 const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: "▤" },
-  { href: "/dashboard/projects", label: "Projects", icon: "◈" },
+  { href: "/dashboard/projects", label: "Copies", icon: "◈" },
   { href: "/dashboard/favorites", label: "Favorites", icon: "★" },
   { href: "/dashboard/profile", label: "Profile", icon: "◉" },
   { href: "/dashboard/settings", label: "Settings", icon: "⚙" },

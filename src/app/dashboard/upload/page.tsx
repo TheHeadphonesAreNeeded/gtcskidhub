@@ -16,7 +16,7 @@ export default function UploadPage() {
         <p className="mb-2 text-4xl">🔒</p>
         <h1 className="mb-2 text-xl font-bold">Moderators only</h1>
         <p className="text-slate-400">
-          Only Moderators and Owners can upload projects. Ask an owner for a
+          Only Moderators and Owners can upload copies. Ask an owner for a
           promotion.
         </p>
       </div>
@@ -26,9 +26,10 @@ export default function UploadPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Upload Project</h1>
+        <h1 className="text-2xl font-bold">Upload Copy</h1>
         <p className="text-sm text-slate-400">
-          Share a new drop with the hub. All fields are validated before saving.
+          Share a new Gorilla Tag copy with the hub. All fields are validated
+          before saving.
         </p>
       </div>
 

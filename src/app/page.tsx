@@ -15,14 +15,14 @@ const DISCORD_ICON = (
 
 const FEATURES = [
   {
-    icon: "🗂️",
-    title: "Curated Projects",
-    body: "Every drop is organized with versions, categories, tags and thumbnails so you find what you need fast.",
+    icon: "🦍",
+    title: "Curated Copies",
+    body: "Every Gorilla Tag copy is organized with versions, categories, tags and thumbnails so you find what you need fast.",
   },
   {
     icon: "🔒",
     title: "Role-Gated Downloads",
-    body: "Configure exactly who can pull each file — public, moderators, or owners only.",
+    body: "Configure exactly who can pull each copy — public, moderators, or owners only.",
   },
   {
     icon: "⚡",
@@ -32,7 +32,7 @@ const FEATURES = [
   {
     icon: "📊",
     title: "Owner Analytics",
-    body: "Track total users, projects, downloads and moderators from a live admin dashboard.",
+    body: "Track total users, copies, downloads and moderators from a live admin dashboard.",
   },
 ];
 
@@ -45,12 +45,12 @@ const ROLES = [
   {
     name: "Moderator",
     color: "from-violet-500/20 to-indigo-500/10 border-violet-500/30",
-    perks: ["Upload projects", "Edit own uploads", "Delete own uploads"],
+    perks: ["Upload copies", "Edit own uploads", "Delete own uploads"],
   },
   {
     name: "User",
     color: "from-white/10 to-white/5 border-white/10",
-    perks: ["Browse the catalogue", "Read descriptions", "Favorite projects"],
+    perks: ["Browse the catalogue", "Read descriptions", "Favorite copies"],
   },
 ];
 
@@ -89,7 +89,7 @@ export default function LandingPage() {
           <Logo />
           <div className="flex items-center gap-3">
             <Link href="/dashboard/projects" className="btn-ghost hidden sm:inline-flex">
-              Browse Projects
+              Browse Copies
             </Link>
             {user ? (
               <Link href="/dashboard" className="btn-primary">
@@ -132,7 +132,8 @@ export default function LandingPage() {
           animate="show"
           className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl"
         >
-          Download <span className="accent-text">Exclusive Projects</span>
+          Download Exclusive{" "}
+          <span className="accent-text">Gorilla Tag Copies</span>
         </motion.h1>
 
         <motion.p
@@ -142,7 +143,7 @@ export default function LandingPage() {
           animate="show"
           className="mt-5 max-w-xl text-base text-slate-400 sm:text-lg"
         >
-          Verified Owners and Moderators can access exclusive downloads.
+          Verified Owners and Moderators can access exclusive Gorilla Tag copies.
         </motion.p>
 
         <motion.div
@@ -165,7 +166,7 @@ export default function LandingPage() {
             href="/dashboard/projects"
             className="btn-ghost px-7 py-3 text-base"
           >
-            Browse Projects
+            Browse Copies
           </Link>
         </motion.div>
       </section>

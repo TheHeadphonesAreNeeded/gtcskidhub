@@ -97,7 +97,7 @@ export default function ProjectForm({
               ...payload,
             });
       toast(
-        mode === "create" ? "Project uploaded" : "Project updated",
+        mode === "create" ? "Copy uploaded" : "Copy updated",
         "success"
       );
       onSaved(result.project);
@@ -125,7 +125,7 @@ export default function ProjectForm({
             className="input"
             value={form.name}
             onChange={(e) => set("name", e.target.value)}
-            placeholder="Awesome Project"
+            placeholder="Copy name"
             maxLength={120}
           />
           {err("name")}
@@ -140,7 +140,7 @@ export default function ProjectForm({
             className="input min-h-[120px] resize-y"
             value={form.description}
             onChange={(e) => set("description", e.target.value)}
-            placeholder="What does this project do?"
+            placeholder="What does this copy do?"
             maxLength={4000}
           />
           {err("description")}
@@ -256,7 +256,7 @@ export default function ProjectForm({
           {saving
             ? "Saving…"
             : mode === "create"
-            ? "Upload Project"
+            ? "Upload Copy"
             : "Save Changes"}
         </button>
         {onCancel && (
