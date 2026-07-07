@@ -24,7 +24,7 @@ export default function FavoritesPage() {
       <div>
         <h1 className="text-2xl font-bold">Favorites</h1>
         <p className="text-sm text-slate-400">
-          Projects you&apos;ve starred for quick access.
+          Copies you&apos;ve starred for quick access.
         </p>
       </div>
 
@@ -35,7 +35,7 @@ export default function FavoritesPage() {
           <p className="mb-2 text-4xl">★</p>
           <p className="mb-4 text-slate-400">No favorites yet.</p>
           <Link href="/dashboard/projects" className="btn-primary">
-            Browse Projects
+            Browse Copies
           </Link>
         </div>
       ) : (

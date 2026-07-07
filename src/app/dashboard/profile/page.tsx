@@ -70,7 +70,7 @@ export default function ProfilePage() {
           <InfoTile label="Joined" value={formatDate(user.created_at)} />
           <InfoTile
             label="Uploads"
-            value={`${uploaded.length} project${uploaded.length === 1 ? "" : "s"}`}
+            value={`${uploaded.length} cop${uploaded.length === 1 ? "y" : "ies"}`}
           />
         </div>
       </motion.div>

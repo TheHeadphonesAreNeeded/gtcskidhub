@@ -5,7 +5,6 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 import { SettingsProvider } from "@/components/providers/SettingsProvider";
 import { ToastProvider } from "@/components/providers/ToastProvider";
 import { AdSenseScript } from "@/components/AdSense";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,12 +23,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "SkidHub — Download Exclusive Projects",
+  title: "SkidHub — Download Exclusive Gorilla Tag Copies",
   description:
-    "SkidHub is a premium project-sharing platform. Verified Owners and Moderators can access exclusive downloads.",
+    "SkidHub is a premium Gorilla Tag copy-sharing platform. Verified Owners and Moderators can access exclusive copies.",
   openGraph: {
     title: "SkidHub",
-    description: "Download exclusive projects. Verified access only.",
+    description: "Download exclusive Gorilla Tag copies. Verified access only.",
     type: "website",
   },
 };
@@ -42,7 +41,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`dark ${inter.variable} ${mono.variable}`}>
       <body className="font-sans">
-        <GoogleAnalytics />
         <AdSenseScript />
         <SettingsProvider>
           <ToastProvider>

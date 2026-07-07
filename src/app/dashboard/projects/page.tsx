@@ -71,7 +71,7 @@ export default function ProjectsPage() {
     try {
       await api.del(`projects?id=${p.id}`);
       setProjects((list) => list.filter((x) => x.id !== p.id));
-      toast("Project deleted", "success");
+      toast("Copy deleted", "success");
     } catch (e) {
       toast((e as Error).message, "error");
     } finally {
@@ -83,9 +83,9 @@ export default function ProjectsPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Projects</h1>
+          <h1 className="text-2xl font-bold">Copies</h1>
           <p className="text-sm text-slate-400">
-            Browse the full catalogue of exclusive drops.
+            Browse the full catalogue of exclusive Gorilla Tag copies.
           </p>
         </div>
         {user && roleAllows(user.role, "moderator") && (
@@ -100,7 +100,7 @@ export default function ProjectsPage() {
         <div className="flex flex-col gap-3 sm:flex-row">
           <input
             className="input flex-1"
-            placeholder="Search projects…"
+            placeholder="Search copies…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -156,7 +156,7 @@ export default function ProjectsPage() {
         <ProjectGridSkeleton />
       ) : projects.length === 0 ? (
         <div className="glass p-12 text-center text-slate-400">
-          No projects match your filters.
+          No copies match your filters.
         </div>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -183,7 +183,7 @@ export default function ProjectsPage() {
       <Modal
         open={!!editing}
         onClose={() => setEditing(null)}
-        title="Edit Project"
+        title="Edit Copy"
       >
         {editing && (
           <ProjectForm
@@ -204,7 +204,7 @@ export default function ProjectsPage() {
       <Modal
         open={!!confirmDelete}
         onClose={() => setConfirmDelete(null)}
-        title="Delete project?"
+        title="Delete copy?"
       >
         {confirmDelete && (
           <div className="space-y-6">

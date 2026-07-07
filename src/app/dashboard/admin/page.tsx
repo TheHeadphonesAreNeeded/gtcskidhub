@@ -102,11 +102,11 @@ export default function AdminPage() {
   }
 
   async function deleteProject(p: Project) {
-    if (!confirm(`Delete project "${p.name}"?`)) return;
+    if (!confirm(`Delete copy "${p.name}"?`)) return;
     try {
       await api.del(`projects?id=${p.id}`);
       setProjects((list) => list.filter((x) => x.id !== p.id));
-      toast("Project deleted", "success");
+      toast("Copy deleted", "success");
     } catch (e) {
       toast((e as Error).message, "error");
     }
@@ -114,7 +114,7 @@ export default function AdminPage() {
 
   const statTiles = [
     { label: "Total Users", value: stats?.totalUsers, icon: "◉" },
-    { label: "Total Projects", value: stats?.totalProjects, icon: "◈" },
+    { label: "Total Copies", value: stats?.totalProjects, icon: "◈" },
     { label: "Downloads", value: stats?.totalDownloads, icon: "⬇" },
     { label: "Moderators", value: stats?.totalModerators, icon: "🛡️" },
   ];
@@ -124,7 +124,7 @@ export default function AdminPage() {
       <div>
         <h1 className="text-2xl font-bold">Admin Panel</h1>
         <p className="text-sm text-slate-400">
-          Manage users, projects, and monitor activity.
+          Manage users, copies, and monitor activity.
         </p>
       </div>
 
@@ -163,7 +163,7 @@ export default function AdminPage() {
                 : "bg-white/5 text-slate-400 hover:bg-white/10"
             }`}
           >
-            {t}
+            {t === "projects" ? "copies" : t}
           </button>
         ))}
       </div>
@@ -197,7 +197,7 @@ export default function AdminPage() {
       <Modal
         open={!!editing}
         onClose={() => setEditing(null)}
-        title="Edit Project"
+        title="Edit Copy"
       >
         {editing && (
           <ProjectForm
@@ -320,7 +320,7 @@ function ProjectsTable({
       <table className="w-full min-w-[640px] text-sm">
         <thead>
           <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wide text-slate-500">
-            <th className="px-5 py-3">Project</th>
+            <th className="px-5 py-3">Copy</th>
             <th className="px-5 py-3">Category</th>
             <th className="px-5 py-3">Downloads</th>
             <th className="px-5 py-3">Author</th>
@@ -357,7 +357,7 @@ function ProjectsTable({
           {projects.length === 0 && (
             <tr>
               <td colSpan={5} className="px-5 py-10 text-center text-slate-400">
-                No projects yet.
+                No copies yet.
               </td>
             </tr>
           )}
@@ -373,7 +373,7 @@ function DownloadsTable({ rows }: { rows: DownloadRow[] }) {
       <table className="w-full min-w-[560px] text-sm">
         <thead>
           <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wide text-slate-500">
-            <th className="px-5 py-3">Project</th>
+            <th className="px-5 py-3">Copy</th>
             <th className="px-5 py-3">User</th>
             <th className="px-5 py-3 text-right">When</th>
           </tr>

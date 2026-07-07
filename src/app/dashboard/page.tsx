@@ -37,7 +37,7 @@ export default function DashboardHome() {
   const canUpload = user && roleAllows(user.role, "moderator");
 
   const stats = [
-    { label: "Projects", value: projects.length, icon: "◈" },
+    { label: "Copies", value: projects.length, icon: "◈" },
     { label: "Total Downloads", value: totalDownloads, icon: "⬇" },
     { label: "Your Favorites", value: favIds.length, icon: "★" },
   ];
@@ -59,7 +59,7 @@ export default function DashboardHome() {
         </div>
         {canUpload && (
           <Link href="/dashboard/upload" className="btn-primary">
-            ⬆ Upload Project
+            ⬆ Upload Copy
           </Link>
         )}
       </motion.div>
@@ -92,7 +92,7 @@ export default function DashboardHome() {
       {/* Trending */}
       <div>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">🔥 Trending Projects</h2>
+          <h2 className="text-lg font-semibold">🔥 Trending Copies</h2>
           <Link
             href="/dashboard/projects"
             className="text-sm text-slate-400 hover:text-white"
@@ -104,7 +104,7 @@ export default function DashboardHome() {
           <ProjectGridSkeleton count={3} />
         ) : projects.length === 0 ? (
           <div className="glass p-10 text-center text-slate-400">
-            No projects yet.{" "}
+            No copies yet.{" "}
             {canUpload && (
               <Link href="/dashboard/upload" className="accent-text font-semibold">
                 Upload the first one.

@@ -19,12 +19,12 @@ interface ProjectCardProps {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Scripts: "text-sky-300 bg-sky-500/10 border-sky-500/20",
-  Tools: "text-violet-300 bg-violet-500/10 border-violet-500/20",
-  Games: "text-emerald-300 bg-emerald-500/10 border-emerald-500/20",
-  Bots: "text-amber-300 bg-amber-500/10 border-amber-500/20",
-  Templates: "text-pink-300 bg-pink-500/10 border-pink-500/20",
-  Exploits: "text-rose-300 bg-rose-500/10 border-rose-500/20",
+  "Mod Menus": "text-violet-300 bg-violet-500/10 border-violet-500/20",
+  Cosmetics: "text-pink-300 bg-pink-500/10 border-pink-500/20",
+  Recolors: "text-amber-300 bg-amber-500/10 border-amber-500/20",
+  Maps: "text-emerald-300 bg-emerald-500/10 border-emerald-500/20",
+  Platformer: "text-sky-300 bg-sky-500/10 border-sky-500/20",
+  Plugins: "text-indigo-300 bg-indigo-500/10 border-indigo-500/20",
   Utilities: "text-cyan-300 bg-cyan-500/10 border-cyan-500/20",
   Other: "text-slate-300 bg-white/5 border-white/10",
 };

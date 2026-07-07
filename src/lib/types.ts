@@ -63,12 +63,12 @@ export interface AdminStats {
 }
 
 export const CATEGORIES = [
-  "Scripts",
-  "Tools",
-  "Games",
-  "Bots",
-  "Templates",
-  "Exploits",
+  "Mod Menus",
+  "Cosmetics",
+  "Recolors",
+  "Maps",
+  "Platformer",
+  "Plugins",
   "Utilities",
   "Other",
 ] as const;

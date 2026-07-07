@@ -39,7 +39,7 @@ export default function DashboardLayout({
           <h1 className="mb-2 text-2xl font-bold">Sign in to continue</h1>
           <p className="mb-7 text-sm text-slate-400">
             SkidHub is a verified-access platform. Log in with Discord to browse
-            projects and unlock your role.
+            Gorilla Tag copies and unlock your role.
           </p>
           <a href={LOGIN_URL} className="btn-primary w-full py-3">
             Login with Discord
