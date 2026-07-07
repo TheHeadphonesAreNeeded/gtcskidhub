@@ -48,10 +48,10 @@ export function safe<T extends (...args: any[]) => Promise<HandlerResponse>>(
       return await fn(...args);
     } catch (err) {
       console.error("[skidhub] unhandled function error:", err);
-      const message =
-        err instanceof Error && err.message.startsWith("Missing required")
-          ? err.message
-          : "Something went wrong";
+      // Surface the real error message to help diagnose configuration
+      // issues (env vars, Supabase URL/keys, schema). These messages do not
+      // contain secret values.
+      const message = err instanceof Error ? err.message : String(err);
       return serverError(message);
     }
   }) as T;
