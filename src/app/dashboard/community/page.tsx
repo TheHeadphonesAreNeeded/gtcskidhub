@@ -41,6 +41,28 @@ function isMetaOrItch(url: string): boolean {
   }
 }
 
+function isDiscordInvite(url: string): boolean {
+  if (!url.trim()) return true; // optional
+  try {
+    const u = new URL(url);
+    const h = u.hostname.toLowerCase();
+    if (h === "discord.gg") return u.pathname.length > 1;
+    if (h === "discord.com" || h === "www.discord.com" || h === "discordapp.com")
+      return u.pathname.toLowerCase().startsWith("/invite/");
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+const EMPTY = {
+  title: "",
+  description: "",
+  thumbnail: "",
+  store_url: "",
+  discord_invite: "",
+};
+
 export default function CommunityPage() {
   const { user } = useAuth();
   const toast = useToast();
@@ -49,12 +71,8 @@ export default function CommunityPage() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    thumbnail: "",
-    store_url: "",
-  });
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState({ ...EMPTY });
 
   useEffect(() => {
     api
@@ -68,6 +86,24 @@ export default function CommunityPage() {
     setForm((f) => ({ ...f, [k]: v }));
   }
 
+  function openCreate() {
+    setEditingId(null);
+    setForm({ ...EMPTY });
+    setOpen(true);
+  }
+
+  function openEdit(p: Submission) {
+    setEditingId(p.id);
+    setForm({
+      title: p.title,
+      description: p.description,
+      thumbnail: p.thumbnail ?? "",
+      store_url: p.store_url,
+      discord_invite: p.discord_invite ?? "",
+    });
+    setOpen(true);
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.title.trim() || !form.description.trim()) {
@@ -78,16 +114,30 @@ export default function CommunityPage() {
       toast("Link must be a Meta or itch.io URL", "error");
       return;
     }
+    if (!isDiscordInvite(form.discord_invite.trim())) {
+      toast("Discord invite must be a discord.gg / discord.com link", "error");
+      return;
+    }
     setSaving(true);
     try {
-      const { submission } = await api.post<{ submission: Submission }>(
-        "submissions",
-        form
-      );
-      setPosts((p) => [submission, ...p]);
-      setForm({ title: "", description: "", thumbnail: "", store_url: "" });
+      if (editingId) {
+        const { submission } = await api.put<{ submission: Submission }>(
+          "submissions",
+          { id: editingId, ...form }
+        );
+        setPosts((p) => p.map((x) => (x.id === submission.id ? submission : x)));
+        toast("Post updated", "success");
+      } else {
+        const { submission } = await api.post<{ submission: Submission }>(
+          "submissions",
+          form
+        );
+        setPosts((p) => [submission, ...p]);
+        toast("Posted to the community", "success");
+      }
+      setForm({ ...EMPTY });
+      setEditingId(null);
       setOpen(false);
-      toast("Posted to the community", "success");
     } catch (err) {
       toast((err as Error).message, "error");
     } finally {
@@ -119,7 +169,7 @@ export default function CommunityPage() {
             to everyone.
           </p>
         </div>
-        <button onClick={() => setOpen(true)} className="btn-primary">
+        <button onClick={openCreate} className="btn-primary">
           ＋ Post a copy
         </button>
       </div>
@@ -132,7 +182,7 @@ export default function CommunityPage() {
           <p className="mb-4 text-slate-400">
             No community posts yet. Be the first to share one.
           </p>
-          <button onClick={() => setOpen(true)} className="btn-primary">
+          <button onClick={openCreate} className="btn-primary">
             Post a copy
           </button>
         </div>
@@ -190,13 +240,35 @@ export default function CommunityPage() {
                     >
                       {meta.cta} ↗
                     </a>
-                    {canManage(p) && (
-                      <button
-                        onClick={() => remove(p)}
-                        className="btn-danger w-full py-2 text-xs"
+                    {p.discord_invite && (
+                      <a
+                        href={p.discord_invite}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-ghost w-full py-2 text-sm"
+                        style={{ color: "#c7d2fe" }}
                       >
-                        Delete
-                      </button>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                          <path d="M20.317 4.369A19.79 19.79 0 0 0 15.885 3c-.2.36-.43.84-.59 1.23a18.27 18.27 0 0 0-5.6 0A12.6 12.6 0 0 0 9.1 3a19.74 19.74 0 0 0-4.43 1.37C1.86 8.58 1.1 12.68 1.48 16.72a19.9 19.9 0 0 0 6.06 3.08c.49-.67.93-1.38 1.3-2.13-.71-.27-1.4-.6-2.04-.99.17-.13.34-.26.5-.4a14.2 14.2 0 0 0 12.2 0c.17.14.34.27.5.4-.65.39-1.34.72-2.05.99.38.75.81 1.46 1.3 2.13a19.85 19.85 0 0 0 6.07-3.08c.44-4.68-.76-8.74-3.2-12.35ZM8.52 14.34c-1.18 0-2.15-1.09-2.15-2.42 0-1.34.95-2.43 2.15-2.43 1.2 0 2.17 1.1 2.15 2.43 0 1.33-.95 2.42-2.15 2.42Zm6.96 0c-1.18 0-2.15-1.09-2.15-2.42 0-1.34.95-2.43 2.15-2.43 1.2 0 2.17 1.1 2.15 2.43 0 1.33-.94 2.42-2.15 2.42Z" />
+                        </svg>
+                        Join Discord
+                      </a>
+                    )}
+                    {canManage(p) && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => openEdit(p)}
+                          className="btn-ghost flex-1 py-2 text-xs"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => remove(p)}
+                          className="btn-danger flex-1 py-2 text-xs"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -206,8 +278,12 @@ export default function CommunityPage() {
         </div>
       )}
 
-      {/* Post form */}
-      <Modal open={open} onClose={() => setOpen(false)} title="Post a copy">
+      {/* Post / edit form */}
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title={editingId ? "Edit post" : "Post a copy"}
+      >
         <form onSubmit={submit} className="space-y-5">
           <div>
             <label className="label" htmlFor="c-title">
@@ -237,7 +313,7 @@ export default function CommunityPage() {
           </div>
           <div>
             <label className="label" htmlFor="c-thumb">
-              Thumbnail URL <span className="text-slate-600">(optional)</span>
+              Game image URL <span className="text-slate-600">(optional)</span>
             </label>
             <input
               id="c-thumb"
@@ -258,13 +334,25 @@ export default function CommunityPage() {
               onChange={(e) => set("store_url", e.target.value)}
               placeholder="https://itch.io/…  or  https://www.meta.com/…"
             />
+          </div>
+          <div>
+            <label className="label" htmlFor="c-invite">
+              Discord invite <span className="text-slate-600">(optional)</span>
+            </label>
+            <input
+              id="c-invite"
+              className="input"
+              value={form.discord_invite}
+              onChange={(e) => set("discord_invite", e.target.value)}
+              placeholder="https://discord.gg/…"
+            />
             <p className="mt-1 text-xs text-slate-500">
-              Only meta.com / oculus.com and itch.io links are allowed.
+              Shown as a &quot;Join Discord&quot; button on your post.
             </p>
           </div>
           <div className="flex gap-3">
             <button type="submit" className="btn-primary flex-1 py-3" disabled={saving}>
-              {saving ? "Posting…" : "Post"}
+              {saving ? "Saving…" : editingId ? "Save changes" : "Post"}
             </button>
             <button
               type="button"

@@ -75,6 +75,24 @@ export type Category = (typeof CATEGORIES)[number];
 // external store (Meta / Horizon or itch.io) rather than a Drive file.
 export type StoreType = "meta" | "itch";
 
+// Uploader applications — users apply, owners accept (which promotes them to
+// moderator so they can upload). One application per user.
+export type ApplicationStatus = "pending" | "accepted" | "rejected";
+
+export interface Application {
+  id: string;
+  user_id: string;
+  discord_username: string;
+  game_link: string;
+  known_as: string;
+  game_image: string | null;
+  discord_invite: string;
+  reason: string;
+  status: ApplicationStatus;
+  created_at: string;
+  reviewed_at: string | null;
+}
+
 export interface Submission {
   id: string;
   title: string;
@@ -82,6 +100,7 @@ export interface Submission {
   thumbnail: string | null;
   store_url: string;
   store_type: StoreType;
+  discord_invite: string | null;
   author: string;
   author_id: string | null;
   created_at: string;

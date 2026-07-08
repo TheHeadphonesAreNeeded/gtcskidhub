@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
 import ProjectForm from "@/components/ProjectForm";
@@ -14,11 +15,14 @@ export default function UploadPage() {
     return (
       <div className="glass p-12 text-center">
         <p className="mb-2 text-4xl">🔒</p>
-        <h1 className="mb-2 text-xl font-bold">Moderators only</h1>
-        <p className="text-slate-400">
-          Only Moderators and Owners can upload copies. Ask an owner for a
-          promotion.
+        <h1 className="mb-2 text-xl font-bold">Uploading is invite-only</h1>
+        <p className="mb-6 text-slate-400">
+          You need to be accepted before you can upload copies. Submit an
+          application and an owner will review it.
         </p>
+        <Link href="/dashboard/apply" className="btn-primary">
+          Apply to upload
+        </Link>
       </div>
     );
   }

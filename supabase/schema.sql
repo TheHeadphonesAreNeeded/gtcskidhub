@@ -95,6 +95,7 @@ create table if not exists submissions (
   thumbnail   text,
   store_url   text not null,
   store_type  text not null default 'itch' check (store_type in ('meta','itch')),
+  discord_invite text,
   author      text not null,
   author_id   uuid references users(id) on delete set null,
   created_at  timestamptz not null default now()
@@ -102,6 +103,27 @@ create table if not exists submissions (
 
 create index if not exists submissions_created_idx on submissions(created_at desc);
 create index if not exists submissions_author_idx  on submissions(author_id);
+
+-- ---- Uploader applications ----------------------------------
+-- Users apply for upload access; owners accept (which promotes the user to
+-- moderator) or reject. One application per user.
+create table if not exists applications (
+  id               uuid primary key default gen_random_uuid(),
+  user_id          uuid not null references users(id) on delete cascade,
+  discord_username text not null,
+  game_link        text not null,
+  known_as         text not null,
+  game_image       text,
+  discord_invite   text not null,
+  reason           text not null,
+  status           text not null default 'pending'
+                     check (status in ('pending','accepted','rejected')),
+  created_at       timestamptz not null default now(),
+  reviewed_at      timestamptz,
+  unique (user_id)
+);
+
+create index if not exists applications_status_idx on applications(status);
 
 -- ---- Row Level Security -------------------------------------
 -- Service-role (used by the Netlify Functions) always bypasses RLS.
@@ -112,6 +134,7 @@ alter table projects      enable row level security;
 alter table favorites     enable row level security;
 alter table download_logs enable row level security;
 alter table submissions   enable row level security;
+alter table applications  enable row level security;
 
 -- Optional: allow the public anon key to read the catalogue directly.
 -- Uncomment if you want client-side reads without going through a function.
