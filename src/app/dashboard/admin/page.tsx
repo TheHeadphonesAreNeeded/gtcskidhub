@@ -125,16 +125,18 @@ export default function AdminPage() {
       setApplications((list) =>
         list.map((a) => (a.id === application.id ? application : a))
       );
-      if (action === "accept") {
-        // Reflect the promotion in the users table locally.
-        setUsers((list) =>
-          list.map((u) =>
-            u.id === app.user_id ? { ...u, role: "moderator" as Role } : u
-          )
-        );
-      }
+      // Reflect the posting-permission change locally.
+      setUsers((list) =>
+        list.map((u) =>
+          u.id === app.user_id
+            ? { ...u, can_post: action === "accept" }
+            : u
+        )
+      );
       toast(
-        action === "accept" ? `${app.known_as} accepted` : "Application rejected",
+        action === "accept"
+          ? `${app.known_as} can now post copies`
+          : "Application rejected",
         "success"
       );
     } catch (e) {

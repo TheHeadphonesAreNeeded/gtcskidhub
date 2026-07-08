@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import Logo from "@/components/Logo";
 import RoleBadge from "@/components/RoleBadge";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { roleAllows } from "@/lib/types";
+import { roleAllows, canPostCopies } from "@/lib/types";
 
 const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: "▤" },
@@ -26,11 +26,18 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const isOwner = user && roleAllows(user.role, "owner");
 
   const items = [...NAV];
+  // Uploading Assets is for moderators/owners.
   if (canUpload) {
     items.splice(2, 0, { href: "/dashboard/upload", label: "Upload", icon: "⬆" });
-  } else if (user) {
-    // Regular users apply for upload access instead.
-    items.splice(2, 0, { href: "/dashboard/apply", label: "Apply", icon: "✎" });
+  }
+  // Posting copies in Community is invite-only; those who can't post yet apply.
+  if (user && !canPostCopies(user)) {
+    const idx = items.findIndex((i) => i.href === "/dashboard/community");
+    items.splice(idx + 1, 0, {
+      href: "/dashboard/apply",
+      label: "Apply",
+      icon: "✎",
+    });
   }
 
   return (

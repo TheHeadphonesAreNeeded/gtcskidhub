@@ -15,13 +15,13 @@ export default function UploadPage() {
     return (
       <div className="glass p-12 text-center">
         <p className="mb-2 text-4xl">🔒</p>
-        <h1 className="mb-2 text-xl font-bold">Uploading is invite-only</h1>
+        <h1 className="mb-2 text-xl font-bold">Moderators only</h1>
         <p className="mb-6 text-slate-400">
-          You need to be accepted before you can upload copies. Submit an
-          application and an owner will review it.
+          Uploading Assets is limited to Moderators and Owners. If you want to
+          share your own copy, post it in the Community area instead.
         </p>
-        <Link href="/dashboard/apply" className="btn-primary">
-          Apply to upload
+        <Link href="/dashboard/community" className="btn-primary">
+          Go to Community
         </Link>
       </div>
     );

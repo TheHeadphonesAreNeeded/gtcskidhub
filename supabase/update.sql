@@ -8,6 +8,9 @@
 
 create extension if not exists "pgcrypto";
 
+-- ---- Users: approval to post copies -------------------------
+alter table users add column if not exists can_post boolean not null default false;
+
 -- ---- Community submissions ----------------------------------
 create table if not exists submissions (
   id          uuid primary key default gen_random_uuid(),

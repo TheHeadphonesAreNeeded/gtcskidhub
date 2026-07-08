@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useToast } from "@/components/providers/ToastProvider";
 import Modal from "@/components/Modal";
 import { ProjectGridSkeleton } from "@/components/Skeleton";
 import { api } from "@/lib/api";
-import { roleAllows, type Submission } from "@/lib/types";
+import { roleAllows, canPostCopies, type Submission } from "@/lib/types";
 import { formatDate } from "@/lib/format";
 
 const STORE_META: Record<
@@ -158,6 +159,7 @@ export default function CommunityPage() {
 
   const canManage = (p: Submission) =>
     !!user && (roleAllows(user.role, "owner") || p.author_id === user.id);
+  const mayPost = canPostCopies(user);
 
   return (
     <div className="space-y-6">
@@ -169,9 +171,15 @@ export default function CommunityPage() {
             to everyone.
           </p>
         </div>
-        <button onClick={openCreate} className="btn-primary">
-          ＋ Post a copy
-        </button>
+        {mayPost ? (
+          <button onClick={openCreate} className="btn-primary">
+            ＋ Post a copy
+          </button>
+        ) : (
+          <Link href="/dashboard/apply" className="btn-ghost">
+            🔒 Apply to post
+          </Link>
+        )}
       </div>
 
       {loading ? (
@@ -180,11 +188,18 @@ export default function CommunityPage() {
         <div className="glass p-12 text-center">
           <p className="mb-2 text-4xl">✦</p>
           <p className="mb-4 text-slate-400">
-            No community posts yet. Be the first to share one.
+            No community posts yet.{" "}
+            {mayPost ? "Be the first to share one." : "Posting is invite-only."}
           </p>
-          <button onClick={openCreate} className="btn-primary">
-            Post a copy
-          </button>
+          {mayPost ? (
+            <button onClick={openCreate} className="btn-primary">
+              Post a copy
+            </button>
+          ) : (
+            <Link href="/dashboard/apply" className="btn-primary">
+              Apply to post
+            </Link>
+          )}
         </div>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

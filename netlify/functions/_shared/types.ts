@@ -20,4 +20,11 @@ export interface SessionUser {
   display_name: string | null;
   avatar: string | null;
   role: Role;
+  can_post: boolean;
+}
+
+// Whether a user may post copies in the Community area (owners always can).
+export function canPost(user: SessionUser | null): boolean {
+  if (!user) return false;
+  return user.role === "owner" || !!user.can_post;
 }

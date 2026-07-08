@@ -26,7 +26,7 @@ export const handler: Handler = safe(async (event: HandlerEvent) => {
   if (event.httpMethod === "GET") {
     const { data, error } = await supabase
       .from("users")
-      .select("id, discord_id, username, display_name, avatar, role, created_at")
+      .select("id, discord_id, username, display_name, avatar, role, can_post, created_at")
       .order("created_at", { ascending: false });
     if (error) return badRequest("Could not load users");
     return ok({ users: data ?? [] });
@@ -54,7 +54,7 @@ export const handler: Handler = safe(async (event: HandlerEvent) => {
       .from("users")
       .update({ role })
       .eq("id", id)
-      .select("id, discord_id, username, display_name, avatar, role, created_at")
+      .select("id, discord_id, username, display_name, avatar, role, can_post, created_at")
       .single();
     if (error || !data) return notFound("User not found");
     return ok({ user: data });
