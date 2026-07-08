@@ -17,7 +17,18 @@ export interface User {
   display_name: string | null;
   avatar: string | null;
   role: Role;
+  // Approved (via an accepted application) to post copies in Community.
+  // Separate from the role/asset-upload permission. Owners can always post.
+  can_post: boolean;
   created_at: string;
+}
+
+// Whether a user may post copies in the Community area.
+export function canPostCopies(
+  user: { role: Role; can_post?: boolean } | null
+): boolean {
+  if (!user) return false;
+  return user.role === "owner" || !!user.can_post;
 }
 
 export interface Project {

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useToast } from "@/components/providers/ToastProvider";
 import { api } from "@/lib/api";
-import { roleAllows, type Application } from "@/lib/types";
+import { canPostCopies, type Application } from "@/lib/types";
 import { formatDate } from "@/lib/format";
 
 const EMPTY = {
@@ -26,10 +26,10 @@ export default function ApplyPage() {
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ ...EMPTY });
 
-  const alreadyUploader = user && roleAllows(user.role, "moderator");
+  const canAlreadyPost = canPostCopies(user);
 
   useEffect(() => {
-    if (alreadyUploader) {
+    if (canAlreadyPost) {
       setLoading(false);
       return;
     }
@@ -50,7 +50,7 @@ export default function ApplyPage() {
       .catch(() => {})
       .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [alreadyUploader]);
+  }, [canAlreadyPost]);
 
   function set<K extends keyof typeof form>(k: K, v: (typeof form)[K]) {
     setForm((f) => ({ ...f, [k]: v }));
@@ -77,14 +77,14 @@ export default function ApplyPage() {
     return <div className="glass h-64 skeleton" />;
   }
 
-  // Already a moderator/owner.
-  if (alreadyUploader) {
+  // Already approved to post copies (or an owner).
+  if (canAlreadyPost) {
     return (
       <div className="glass mx-auto max-w-lg p-10 text-center">
         <p className="mb-2 text-4xl">✅</p>
-        <h1 className="mb-2 text-xl font-bold">You can already upload</h1>
+        <h1 className="mb-2 text-xl font-bold">You can already post copies</h1>
         <p className="text-slate-400">
-          Your account has upload access. Head to Upload to add a copy.
+          Your account is approved. Head to Community to post a copy.
         </p>
       </div>
     );
@@ -102,8 +102,8 @@ export default function ApplyPage() {
           </h1>
           <p className="text-slate-400">
             {pending
-              ? "An owner will review your application soon. You'll get upload access if you're accepted."
-              : "You've been accepted! Refresh the page to see your new upload access."}
+              ? "An owner will review your application soon. You'll be able to post copies in Community if you're accepted."
+              : "You've been accepted! Refresh the page — you can now post copies in Community."}
           </p>
           <p className="mt-4 text-xs text-slate-500">
             Submitted {formatDate(application.created_at)}
@@ -117,9 +117,10 @@ export default function ApplyPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Apply to upload</h1>
+        <h1 className="text-2xl font-bold">Apply to post copies</h1>
         <p className="text-sm text-slate-400">
-          Uploading is invite-only. Fill this out and an owner will review it.
+          Posting copies in Community is invite-only. Fill this out and an owner
+          will review it.
           {application?.status === "rejected" &&
             " Your previous application was declined — you can apply again."}
         </p>

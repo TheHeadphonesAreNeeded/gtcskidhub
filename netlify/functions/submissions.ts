@@ -1,6 +1,7 @@
 import type { Handler, HandlerEvent } from "@netlify/functions";
 import { getAdminClient } from "./_shared/supabase";
 import { getSessionUser, hasRole } from "./_shared/auth";
+import { canPost } from "./_shared/types";
 import {
   ok,
   badRequest,
@@ -84,6 +85,11 @@ export const handler: Handler = safe(async (event: HandlerEvent) => {
   if (!user) return unauthorized();
 
   if (method === "POST") {
+    // Posting copies is invite-only: requires an accepted application
+    // (can_post) or owner.
+    if (!canPost(user)) {
+      return forbidden("Posting is invite-only — apply to be accepted first");
+    }
     const body = parseJsonBody(event.body);
     const { errors, value } = buildFields(body);
     if (errors.length) return badRequest(errors.join(", "));

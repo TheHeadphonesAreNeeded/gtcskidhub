@@ -143,11 +143,18 @@ export const handler: Handler = safe(async (event: HandlerEvent) => {
     if (fetchErr || !application) return notFound("Application not found");
 
     if (action === "accept") {
-      // Promote the applicant to moderator so they can upload, and adopt the
-      // display name they asked to be known as.
+      // Grant permission to post copies in Community, and adopt the display
+      // name they asked to be known as. This does NOT change their role or
+      // give them access to upload Assets.
       await supabase
         .from("users")
-        .update({ role: "moderator", display_name: application.known_as })
+        .update({ can_post: true, display_name: application.known_as })
+        .eq("id", application.user_id);
+    } else {
+      // Revoking: a rejected re-review removes posting permission.
+      await supabase
+        .from("users")
+        .update({ can_post: false })
         .eq("id", application.user_id);
     }
 

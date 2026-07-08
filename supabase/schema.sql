@@ -31,6 +31,8 @@ create table if not exists users (
   display_name text,
   avatar       text,
   role         text not null default 'user' references roles(name),
+  -- Approved (via accepted application) to post copies in Community.
+  can_post     boolean not null default false,
   created_at   timestamptz not null default now()
 );
 

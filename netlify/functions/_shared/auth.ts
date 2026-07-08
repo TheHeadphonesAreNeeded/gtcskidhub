@@ -68,7 +68,7 @@ export async function getSessionUser(
   const supabase = getAdminClient();
   const { data, error } = await supabase
     .from("users")
-    .select("id, discord_id, username, display_name, avatar, role")
+    .select("id, discord_id, username, display_name, avatar, role, can_post")
     .eq("id", payload.sub)
     .single();
 
