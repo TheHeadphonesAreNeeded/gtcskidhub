@@ -12,6 +12,7 @@ import { api } from "@/lib/api";
 import {
   roleAllows,
   type AdminStats,
+  type Application,
   type Project,
   type Role,
   type User,
@@ -26,7 +27,7 @@ interface DownloadRow {
   created_at: string;
 }
 
-type Tab = "users" | "projects" | "downloads";
+type Tab = "users" | "projects" | "applications" | "downloads";
 
 export default function AdminPage() {
   const { user } = useAuth();
@@ -36,6 +37,7 @@ export default function AdminPage() {
   const [recent, setRecent] = useState<DownloadRow[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("users");
 
@@ -43,17 +45,19 @@ export default function AdminPage() {
 
   const loadAll = useCallback(async () => {
     try {
-      const [statsRes, usersRes, projectsRes] = await Promise.all([
+      const [statsRes, usersRes, projectsRes, appsRes] = await Promise.all([
         api.get<{ stats: AdminStats; recentDownloads: DownloadRow[] }>(
           "admin-stats"
         ),
         api.get<{ users: User[] }>("admin-users"),
         api.get<{ projects: Project[] }>("projects?sort=newest"),
+        api.get<{ applications: Application[] }>("applications"),
       ]);
       setStats(statsRes.stats);
       setRecent(statsRes.recentDownloads);
       setUsers(usersRes.users);
       setProjects(projectsRes.projects);
+      setApplications(appsRes.applications);
     } catch (e) {
       toast((e as Error).message, "error");
     } finally {
@@ -112,6 +116,34 @@ export default function AdminPage() {
     }
   }
 
+  async function reviewApplication(app: Application, action: "accept" | "reject") {
+    try {
+      const { application } = await api.put<{ application: Application }>(
+        "applications",
+        { id: app.id, action }
+      );
+      setApplications((list) =>
+        list.map((a) => (a.id === application.id ? application : a))
+      );
+      if (action === "accept") {
+        // Reflect the promotion in the users table locally.
+        setUsers((list) =>
+          list.map((u) =>
+            u.id === app.user_id ? { ...u, role: "moderator" as Role } : u
+          )
+        );
+      }
+      toast(
+        action === "accept" ? `${app.known_as} accepted` : "Application rejected",
+        "success"
+      );
+    } catch (e) {
+      toast((e as Error).message, "error");
+    }
+  }
+
+  const pendingApps = applications.filter((a) => a.status === "pending").length;
+
   const statTiles = [
     { label: "Total Users", value: stats?.totalUsers, icon: "◉" },
     { label: "Total Copies", value: stats?.totalProjects, icon: "◈" },
@@ -153,17 +185,22 @@ export default function AdminPage() {
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-2">
-        {(["users", "projects", "downloads"] as const).map((t) => (
+        {(["users", "projects", "applications", "downloads"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`rounded-xl px-4 py-2 text-sm font-medium capitalize transition ${
+            className={`relative rounded-xl px-4 py-2 text-sm font-medium capitalize transition ${
               tab === t
                 ? "accent-gradient text-white"
                 : "bg-white/5 text-slate-400 hover:bg-white/10"
             }`}
           >
             {t === "projects" ? "copies" : t}
+            {t === "applications" && pendingApps > 0 && (
+              <span className="ml-2 rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                {pendingApps}
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -188,6 +225,11 @@ export default function AdminPage() {
             projects={projects}
             onEdit={setEditing}
             onDelete={deleteProject}
+          />
+        ) : tab === "applications" ? (
+          <ApplicationsTable
+            applications={applications}
+            onReview={reviewApplication}
           />
         ) : (
           <DownloadsTable rows={recent} />
@@ -400,5 +442,105 @@ function DownloadsTable({ rows }: { rows: DownloadRow[] }) {
         </tbody>
       </table>
     </TableWrap>
+  );
+}
+
+const APP_STATUS_STYLE: Record<Application["status"], string> = {
+  pending: "text-amber-300 bg-amber-500/10 border-amber-500/30",
+  accepted: "text-emerald-300 bg-emerald-500/10 border-emerald-500/30",
+  rejected: "text-rose-300 bg-rose-500/10 border-rose-500/30",
+};
+
+function ApplicationsTable({
+  applications,
+  onReview,
+}: {
+  applications: Application[];
+  onReview: (a: Application, action: "accept" | "reject") => void;
+}) {
+  if (applications.length === 0) {
+    return (
+      <div className="px-5 py-12 text-center text-slate-400">
+        No applications yet.
+      </div>
+    );
+  }
+  return (
+    <div className="divide-y divide-white/5">
+      {applications.map((a) => (
+        <div key={a.id} className="flex flex-col gap-4 p-5 sm:flex-row">
+          <div className="shrink-0">
+            {a.game_image ? (
+              <Image
+                src={a.game_image}
+                alt={a.known_as}
+                width={160}
+                height={90}
+                unoptimized
+                className="h-24 w-40 rounded-lg object-cover"
+              />
+            ) : (
+              <div className="flex h-24 w-40 items-center justify-center rounded-lg accent-gradient opacity-30 text-2xl font-black text-white/40">
+                {a.known_as[0]?.toUpperCase()}
+              </div>
+            )}
+          </div>
+
+          <div className="min-w-0 flex-1 space-y-1.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-base font-bold text-white">{a.known_as}</h3>
+              <span className={`badge border ${APP_STATUS_STYLE[a.status]}`}>
+                {a.status}
+              </span>
+              <span className="text-xs text-slate-500">
+                {formatDate(a.created_at)}
+              </span>
+            </div>
+            <p className="text-sm text-slate-300">
+              <span className="text-slate-500">Discord:</span>{" "}
+              {a.discord_username}
+            </p>
+            <p className="text-sm text-slate-400">{a.reason}</p>
+            <div className="flex flex-wrap gap-3 pt-1 text-xs">
+              <a
+                href={a.game_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="accent-text font-semibold"
+              >
+                Game link ↗
+              </a>
+              {a.discord_invite && (
+                <a
+                  href={a.discord_invite}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-indigo-300"
+                >
+                  Discord invite ↗
+                </a>
+              )}
+            </div>
+          </div>
+
+          {a.status === "pending" && (
+            <div className="flex shrink-0 gap-2 sm:flex-col">
+              <button
+                onClick={() => onReview(a, "accept")}
+                className="btn-primary px-4 py-2 text-xs"
+              >
+                Accept
+              </button>
+              <button
+                onClick={() => onReview(a, "reject")}
+                className="btn-danger px-4 py-2 text-xs"
+              >
+                Reject
+              </button>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
   );
 }

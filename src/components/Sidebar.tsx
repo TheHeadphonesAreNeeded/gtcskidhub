@@ -28,6 +28,9 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const items = [...NAV];
   if (canUpload) {
     items.splice(2, 0, { href: "/dashboard/upload", label: "Upload", icon: "⬆" });
+  } else if (user) {
+    // Regular users apply for upload access instead.
+    items.splice(2, 0, { href: "/dashboard/apply", label: "Apply", icon: "✎" });
   }
 
   return (
